@@ -44,7 +44,7 @@
                 </ul>
                 <div class="tab-content">
                     <ul class="media-list tab-pane fade in active">
-                        <li class="media" ng-repeat="dish in menuCtrl.dishes | filter:{category:menuCtrl.filtText}">
+                        <li class="media" ng-repeat="dish in menuCtrl.dishes | filter:{category:menuCtrl.filtText} | orderBy:'-name'">
                             <div class="media-left media-middle">
                                 <a href="#">
                                     <img class="media-object img-thumbnail" ng-src={{dish.image}} alt="Uthappizza">
