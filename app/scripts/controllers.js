@@ -56,7 +56,7 @@ angular.module('confusionApp')
                         
         }])
 
-        .controller('FeedbackController', ['$scope', function($scope) {
+        .controller('FeedbackController', ['$scope', 'feedbackFactory', function($scope, feedbackFactory) {
             
             $scope.sendFeedback = function() {
                 
@@ -68,6 +68,7 @@ angular.module('confusionApp')
                 }
                 else {
                     $scope.invalidChannelSelection = false;
+                    feedbackFactory.saveFeedback().save($scope.feedback);
                     $scope.feedback = {mychannel:"", firstName:"", lastName:"", agree:false, email:"" };
                     $scope.feedback.mychannel="";
                     $scope.feedbackForm.$setPristine();
@@ -117,25 +118,54 @@ angular.module('confusionApp')
             $scope.showDish = false;
             $scope.featuredDish = menuFactory.getDishes().get({id:0})
                 .$promise.then(
-                            function(response){
-                                $scope.featuredDish = response;
-                                $scope.showDish = true;
-                            },
-                            function(response) {
-                                $scope.message = "Error: "+response.status + " " + response.statusText;
-                            }
+                    function(response){
+                        $scope.featuredDish = response;
+                        $scope.showDish = true;
+                    },
+                    function(response) {
+                        $scope.message = "Error: "+response.status + " " + response.statusText;
+                    }
                 );
             
-            $scope.currentPromotion = menuFactory.getPromotion(0);
+            $scope.showPromotion = false;
+            $scope.promotionMessage = "Loading...";
+            $scope.currentPromotion = menuFactory.getPromotion().get({id:0})
+                .$promise.then(
+                    function(response){
+                        $scope.currentPromotion = response;
+                        $scope.showPromotion = true;
+                    },
+                    function(response) {
+                        $scope.promotionMessage = "Error: "+response.status + " " + response.statusText;
+                    }
+            );
             
             //hard-coding the number "3" for the assignment, to keep it simple.
-            $scope.executiveChef = corporateFactory.getLeader(3);
-            
+            $scope.showExecutiveChef = false;
+            $scope.executiveChefMessage = "Loading...";
+            $scope.executiveChef = corporateFactory.getLeaders().get({id:3})
+                .$promise.then(
+                    function(response){
+                        $scope.executiveChef = response;
+                        $scope.showExecutiveChef = true;
+                    },
+                    function(response) {
+                        $scope.executiveChefMessage = "Error: "+response.status + " " + response.statusText;
+                    }
+                );
         }])
     
         .controller('AboutController', ['$scope', 'corporateFactory', function($scope, corporateFactory) {
-        
-            $scope.leaders = corporateFactory.getLeaders();
-        
+            $scope.showLeaders = false;
+            $scope.message = "Loading...";
+            $scope.leaders = corporateFactory.getLeaders().query(
+                    function(response){
+                        $scope.leaders = response;
+                        $scope.showLeaders = true;
+                    },
+                    function(response) {
+                        $scope.message = "Error: "+response.status + " " + response.statusText;
+                    }
+                );
         }])
 ;
